@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/8bitgentleman-activitywatch-mcp-server-badge.png)](https://mseep.ai/app/8bitgentleman-activitywatch-mcp-server)
+
 # ActivityWatch MCP Server
 
 A Model Context Protocol (MCP) server that connects to [ActivityWatch](https://activitywatch.net/), allowing LLMs like Claude to interact with your time tracking data.
