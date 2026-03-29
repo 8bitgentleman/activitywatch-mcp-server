@@ -7,12 +7,28 @@ import { activitywatch_get_events_tool } from "./rawEvents.js";
 import { activitywatch_query_examples_tool } from "./queryExamples.js";
 import { activitywatch_get_settings_tool } from "./getSettings.js";
 import { AW_API_BASE } from "./config.js";
+import {
+  activitywatch_get_categories_tool,
+  activitywatch_add_category_tool,
+  activitywatch_update_category_tool,
+  activitywatch_delete_category_tool
+} from "./categories.js";
+import { activitywatch_get_uncategorized_events_tool } from "./uncategorizedEvents.js";
 
 // Populate the VERSION constant from package.json
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const packageJson = require('../package.json');
 const VERSION = packageJson.version;
+
+// Parse a value that may be an array or a JSON-encoded array string
+function parseArray(val: any): string[] {
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try { const parsed = JSON.parse(val); if (Array.isArray(parsed)) return parsed; } catch {}
+  }
+  return [];
+}
 
 // Helper function to handle type-safe tool responses
 const makeSafeToolResponse = (handler: Function) => async (...args: any[]) => {
@@ -72,6 +88,31 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         name: activitywatch_get_settings_tool.name,
         description: activitywatch_get_settings_tool.description,
         inputSchema: activitywatch_get_settings_tool.inputSchema
+      },
+      {
+        name: activitywatch_get_categories_tool.name,
+        description: activitywatch_get_categories_tool.description,
+        inputSchema: activitywatch_get_categories_tool.inputSchema
+      },
+      {
+        name: activitywatch_get_uncategorized_events_tool.name,
+        description: activitywatch_get_uncategorized_events_tool.description,
+        inputSchema: activitywatch_get_uncategorized_events_tool.inputSchema
+      },
+      {
+        name: activitywatch_add_category_tool.name,
+        description: activitywatch_add_category_tool.description,
+        inputSchema: activitywatch_add_category_tool.inputSchema
+      },
+      {
+        name: activitywatch_update_category_tool.name,
+        description: activitywatch_update_category_tool.description,
+        inputSchema: activitywatch_update_category_tool.inputSchema
+      },
+      {
+        name: activitywatch_delete_category_tool.name,
+        description: activitywatch_delete_category_tool.description,
+        inputSchema: activitywatch_delete_category_tool.inputSchema
       }
     ]
   };
@@ -271,9 +312,39 @@ but may need additional configuration.
       end: typeof args.end === 'string' ? args.end : undefined
     });
   } else if (request.params.name === activitywatch_get_settings_tool.name) {
-    // For the settings tool
     return makeSafeToolResponse(activitywatch_get_settings_tool.handler)({
       key: typeof args.key === 'string' ? args.key : undefined
+    });
+  } else if (request.params.name === activitywatch_get_categories_tool.name) {
+    return makeSafeToolResponse(activitywatch_get_categories_tool.handler)({});
+  } else if (request.params.name === activitywatch_get_uncategorized_events_tool.name) {
+    return makeSafeToolResponse(activitywatch_get_uncategorized_events_tool.handler)({
+      start: typeof args.start === 'string' ? args.start : undefined,
+      end: typeof args.end === 'string' ? args.end : undefined,
+      limit: typeof args.limit === 'number' ? args.limit : undefined,
+      min_seconds: typeof args.min_seconds === 'number' ? args.min_seconds : undefined
+    });
+  } else if (request.params.name === activitywatch_add_category_tool.name) {
+    return makeSafeToolResponse(activitywatch_add_category_tool.handler)({
+      name: parseArray(args.name),
+      regex: typeof args.regex === 'string' ? args.regex : undefined,
+      ignore_case: typeof args.ignore_case === 'boolean' ? args.ignore_case : undefined,
+      rule_type: args.rule_type === 'none' ? 'none' : args.rule_type === 'regex' ? 'regex' : undefined,
+      color: typeof args.color === 'string' ? args.color : undefined,
+      score: typeof args.score === 'number' ? args.score : undefined
+    });
+  } else if (request.params.name === activitywatch_update_category_tool.name) {
+    return makeSafeToolResponse(activitywatch_update_category_tool.handler)({
+      name: parseArray(args.name),
+      regex: typeof args.regex === 'string' ? args.regex : undefined,
+      ignore_case: typeof args.ignore_case === 'boolean' ? args.ignore_case : undefined,
+      rule_type: args.rule_type === 'none' ? 'none' : args.rule_type === 'regex' ? 'regex' : undefined,
+      color: typeof args.color === 'string' ? args.color : undefined,
+      score: typeof args.score === 'number' ? args.score : undefined
+    });
+  } else if (request.params.name === activitywatch_delete_category_tool.name) {
+    return makeSafeToolResponse(activitywatch_delete_category_tool.handler)({
+      name: Array.isArray(args.name) ? args.name : []
     });
   }
 
