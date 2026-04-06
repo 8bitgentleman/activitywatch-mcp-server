@@ -1,6 +1,6 @@
 {
   "name": "activitywatch-mcp-server",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Model Context Protocol server for ActivityWatch time tracking data",
   "type": "module",
   "bin": {
@@ -9,15 +9,15 @@
   "exports": {
     ".": "./dist/index.js"
   },
-    "scripts": {
-      "build": "tsc",
-      "postbuild": "node -e \"if(process.platform !== 'win32') require('child_process').execSync('chmod +x dist/index.js')\"",
-      "prepare": "npm run build",
-      "start": "node dist/index.js",
-      "dev": "tsc -w",
-      "test": "cross-env NODE_ENV=test jest",
-      "test:settings": "cross-env NODE_ENV=test jest src/getSettings.test.ts"
-    },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "node -e \"if(process.platform !== 'win32') require('child_process').execSync('chmod +x dist/index.js')\"",
+    "prepare": "npm run build",
+    "start": "node dist/index.js",
+    "dev": "tsc -w",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:settings": "cross-env NODE_ENV=test jest src/getSettings.test.ts"
+  },
   "files": [
     "dist"
   ],
@@ -47,6 +47,6 @@
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   }
 }

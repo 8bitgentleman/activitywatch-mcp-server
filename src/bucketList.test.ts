@@ -24,7 +24,7 @@ describe('activitywatch_list_buckets Tool', () => {
     mockedAxios.get.mockResolvedValueOnce({ data: mockBuckets });
 
     const result = await activitywatch_list_buckets_tool.handler({});
-    
+
     expect(result.content[0].type).toBe('text');
     const parsedContent = JSON.parse(result.content[0].text);
     expect(parsedContent).toHaveLength(1);
@@ -108,7 +108,7 @@ describe('activitywatch_list_buckets Tool', () => {
     mockedAxios.get.mockRejectedValueOnce(mockError);
 
     const result = await activitywatch_list_buckets_tool.handler({});
-    
+
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Failed to fetch buckets');
     expect(result.content[0].text).toContain('404');
@@ -118,7 +118,7 @@ describe('activitywatch_list_buckets Tool', () => {
     mockedAxios.get.mockRejectedValueOnce(new Error('Generic Error'));
 
     const result = await activitywatch_list_buckets_tool.handler({});
-    
+
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Failed to fetch buckets: Generic Error');
   });
@@ -132,7 +132,7 @@ describe('activitywatch_list_buckets Tool', () => {
     mockedAxios.get.mockRejectedValueOnce(mockError);
 
     const result = await activitywatch_list_buckets_tool.handler({});
-    
+
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toBe('Failed to fetch buckets: Network Error');
   });

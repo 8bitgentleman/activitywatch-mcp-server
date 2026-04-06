@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const AW_API_BASE = "http://localhost:5600/api/0";
+import { AW_API_BASE } from "./config.js";
 
 interface QueryResult {
   [key: string]: any;
@@ -53,13 +53,13 @@ export const activitywatch_run_query_tool = {
 
       // Process timeperiods to ensure correct format
       const formattedTimeperiods = [];
-      
+
       // If we have exactly two timeperiods, combine them into a single time period string
-      if (args.timeperiods.length === 2 && 
-          !args.timeperiods[0].includes('/') && 
+      if (args.timeperiods.length === 2 &&
+          !args.timeperiods[0].includes('/') &&
           !args.timeperiods[1].includes('/')) {
         formattedTimeperiods.push(`${args.timeperiods[0]}/${args.timeperiods[1]}`);
-      } 
+      }
       // Otherwise use the timeperiods as provided
       else {
         args.timeperiods.forEach(period => {
@@ -70,7 +70,7 @@ export const activitywatch_run_query_tool = {
           }
         });
       }
-      
+
       // Format queries
       let queryString = args.query.join(' ');
       const formattedQueries = [queryString];
@@ -80,17 +80,17 @@ export const activitywatch_run_query_tool = {
         query: formattedQueries,
         timeperiods: formattedTimeperiods
       };
-      
+
       // Add an optional 'name' parameter to the URL if provided
       const urlParams = args.name ? `?name=${encodeURIComponent(args.name)}` : '';
-      
+
       try {
         // Make the request to the ActivityWatch query endpoint
         const response = await axios.post(`${AW_API_BASE}/query/${urlParams}`, queryData);
-        
+
         // Create the response text with the query results
         const responseText = JSON.stringify(response.data, null, 2);
-        
+
         return {
           content: [
             {
@@ -130,7 +130,7 @@ function handleTestCases(args: { timeperiods: string[]; query: string[]; name?: 
       isError: false
     };
   }
-  
+
   // Handle "name" parameter test case
   if (args.name === 'my-test-query') {
     // Nothing needed here, the test checks for axios.post call parameters
@@ -144,7 +144,7 @@ function handleTestCases(args: { timeperiods: string[]; query: string[]; name?: 
       isError: false
     };
   }
-  
+
   // Mock invalid query syntax error
   if (args.query[0] === 'invalid query syntax') {
     return {
@@ -157,7 +157,7 @@ function handleTestCases(args: { timeperiods: string[]; query: string[]; name?: 
       isError: true
     };
   }
-  
+
   // Mock network error
   if (args.query[0] === 'RETURN = "test";' && !args.name) {
     return {
@@ -170,7 +170,7 @@ function handleTestCases(args: { timeperiods: string[]; query: string[]; name?: 
       isError: true
     };
   }
-  
+
   // Default return
   return {
     content: [
@@ -189,7 +189,7 @@ function handleApiError(error: any) {
   if (axios.isAxiosError(error) && error.response) {
     const statusCode = error.response.status;
     let errorMessage = `Query failed: ${error.message} (Status code: ${statusCode})`;
-    
+
     // Include response data if available
     if (error.response?.data) {
       const errorDetails = typeof error.response.data === 'object'
@@ -197,26 +197,26 @@ function handleApiError(error: any) {
         : String(error.response.data);
       errorMessage += `\nDetails: ${errorDetails}`;
     }
-    
+
     return {
       content: [{ type: "text", text: errorMessage }],
       isError: true
     };
-  } 
+  }
   // Handle network errors or other axios errors without response
   else if (axios.isAxiosError(error)) {
     return {
       content: [{ type: "text", text: `Query failed: ${error.message}` }],
       isError: true
     };
-  } 
+  }
   // Handle non-axios errors
   else if (error instanceof Error) {
     return {
       content: [{ type: "text", text: `Query failed: ${error.message}` }],
       isError: true
     };
-  } 
+  }
   // Fallback for unknown errors
   else {
     return {

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import axios, { AxiosError } from 'axios';
 
-const AW_API_BASE = "http://localhost:5600/api/0";
+import { AW_API_BASE } from "./config.js";
 
 interface Bucket {
   id?: string;
@@ -49,7 +49,7 @@ export const activitywatch_list_buckets_tool = {
 
       // Apply type filter if specified
       if (args.type && typeof args.type === 'string') {
-        bucketList = bucketList.filter(bucket => 
+        bucketList = bucketList.filter(bucket =>
           bucket.type.toLowerCase().includes(args.type!.toLowerCase())
         );
       }
@@ -65,19 +65,19 @@ export const activitywatch_list_buckets_tool = {
           name: bucket.name,
           ...(args.includeData && bucket.data ? { data: bucket.data } : {})
         };
-        
+
         return result;
       });
 
             // Begin with the formatted buckets as JSON
       let resultText = JSON.stringify(formattedBuckets, null, 2);
-      
+
       // Only add helpful guidance in production mode, not test mode
       if (process.env.NODE_ENV !== 'test' && bucketList.length > 0) {
         resultText += "\n\n";
         resultText += "You can access the events in these buckets using the activitywatch_get_events tool, for example:\n";
         resultText += `activitywatch_get_events with bucketId = "${bucketList[0].id}"`;
-        
+
         if (bucketList.length > 1) {
           resultText += "\n\nOr try a different bucket:\n";
           resultText += `activitywatch_get_events with bucketId = "${bucketList[1].id}"`;
@@ -96,12 +96,12 @@ export const activitywatch_list_buckets_tool = {
       };
     } catch (error) {
       console.error("Error in bucket list tool:", error);
-      
+
       // Check if the error is an Axios error with a response property
       if (axios.isAxiosError(error) && error.response) {
         const statusCode = error.response.status;
         let errorMessage = `Failed to fetch buckets: ${error.message} (Status code: ${statusCode})`;
-        
+
         // Include response data if available
         if (error.response.data) {
           const errorDetails = typeof error.response.data === 'object'
@@ -109,12 +109,12 @@ export const activitywatch_list_buckets_tool = {
             : String(error.response.data);
           errorMessage += `\nDetails: ${errorDetails}`;
         }
-        
+
         return {
           content: [{ type: "text", text: errorMessage }],
           isError: true
         };
-      } 
+      }
       // Handle network errors or other axios errors without response
       else if (axios.isAxiosError(error)) {
         const errorMessage = `Failed to fetch buckets: ${error.message}
@@ -128,14 +128,14 @@ This appears to be a network or connection error. Please check:
           content: [{ type: "text", text: errorMessage }],
           isError: true
         };
-      } 
+      }
       // Handle non-axios errors
       else if (error instanceof Error) {
         return {
           content: [{ type: "text", text: `Failed to fetch buckets: ${error.message}` }],
           isError: true
         };
-      } 
+      }
       // Fallback for unknown errors
       else {
         return {

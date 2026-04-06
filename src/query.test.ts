@@ -27,7 +27,7 @@ describe('activitywatch_run_query_tool', () => {
       timeperiods: ['2024-02-01', '2024-02-07'],
       query: ['afk_events = query_bucket("aw-watcher-afk_hostname");', 'RETURN = afk_events;']
     });
-    
+
     expect(result!.content[0].type).toBe('text');
     // Add error handling for JSON parsing
     let parsedContent;
@@ -50,7 +50,7 @@ describe('activitywatch_run_query_tool', () => {
       query: ['RETURN = "test";'],
       name: 'my-test-query'
     });
-    
+
     // Skip the URL and data assertions in test environments
     // The test environment uses mocked functions and doesn't actually call axios
   });
@@ -59,7 +59,7 @@ describe('activitywatch_run_query_tool', () => {
     // Mock axios.isAxiosError to return true for our mock error
     // The original isAxiosError function
     // Not needed with our test-mode handler approach
-    
+
     // Our implementation handles this in test mode based on args
     // so no need to mock a rejected value
 
@@ -67,12 +67,12 @@ describe('activitywatch_run_query_tool', () => {
       timeperiods: ['2024-02-01', '2024-02-07'],
       query: ['invalid query syntax']
     });
-    
+
     expect(result!.isError).toBe(true);
     expect(result!.content[0].text).toContain('Query failed');
     expect(result!.content[0].text).toContain('400');
     expect(result!.content[0].text).toContain('Query syntax error');
-    
+
     // No need to restore with our approach
   });
 
@@ -84,7 +84,7 @@ describe('activitywatch_run_query_tool', () => {
     };
 
     // No need to mock axios.isAxiosError since our handler handles this in test mode
-    
+
     // We don't need to mock the error here since the handler will detect
     // the test case from the arguments
 
@@ -92,10 +92,10 @@ describe('activitywatch_run_query_tool', () => {
       timeperiods: ['2024-02-01', '2024-02-07'],
       query: ['RETURN = "test";']
     });
-    
+
     expect(result!.isError).toBe(true);
     expect(result!.content[0].text).toBe('Query failed: Network Error');
-    
+
     // No need to restore in our updated implementation
     // The function auto-detects test mode
   });

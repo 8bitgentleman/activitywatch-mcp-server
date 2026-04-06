@@ -1,0 +1,5 @@
+services:
+  aw-mcp:
+    build: .
+    image: activitywatch-mcp-server:1.2.1
+    stdin_open: true
