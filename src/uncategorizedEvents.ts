@@ -16,6 +16,10 @@ interface Category {
  * Client-side categorization: returns true if the event matches any category rule.
  */
 function matchesAnyCategory(app: string, title: string, categories: Category[]): boolean {
+  // NOTE: AW's own categorization engine tests the regex against the `app` and `title` fields
+  // individually. Here we test against a single concatenated "app title" string for simplicity.
+  // This means a regex like "chrome gmail" would match here but not in the AW UI — a subtle
+  // semantic difference that can cause minor discrepancies in what gets flagged as uncategorized.
   const combined = `${app} ${title}`;
   for (const cat of categories) {
     if (cat.rule.type !== "regex" || !cat.rule.regex) continue;
