@@ -84,8 +84,14 @@ export const activitywatch_get_uncategorized_events_tool = {
         // proceed without categories — all events will be shown
       }
 
-      // Simple query: all window events (no AFK filter to avoid version issues)
-      const query = `events = query_bucket(find_bucket("aw-watcher-window_")); RETURN = events;`;
+      // Query window events filtered by non-AFK periods (standard AW pattern, works across versions)
+      const query = [
+        `window_events = query_bucket(find_bucket("aw-watcher-window_"));`,
+        `afk_events = query_bucket(find_bucket("aw-watcher-afk_"));`,
+        `not_afk = filter_keyvals(afk_events, "status", ["not-afk"]);`,
+        `events = filter_period_intersect(window_events, not_afk);`,
+        `RETURN = events;`
+      ].join(" ");
 
       const response = await axios.post(`${AW_API_BASE}/query/`, {
         query: [query],
