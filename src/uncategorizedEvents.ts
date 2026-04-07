@@ -123,12 +123,14 @@ export const activitywatch_get_uncategorized_events_tool = {
         }
       }
 
-      const results: UncategorizedSummary[] = Array.from(map.values())
+      const allUncategorized = Array.from(map.values());
+      // Compute total before filtering/slicing so the label reflects the true uncategorized time
+      const totalUncategorized = allUncategorized.reduce((s, e) => s + e.duration_seconds, 0);
+
+      const results: UncategorizedSummary[] = allUncategorized
         .filter(e => e.duration_seconds >= min_seconds)
         .sort((a, b) => b.duration_seconds - a.duration_seconds)
         .slice(0, limit);
-
-      const totalUncategorized = results.reduce((s, e) => s + e.duration_seconds, 0);
 
       const text = [
         `Uncategorized events: ${start.toISOString().slice(0, 10)} → ${end.toISOString().slice(0, 10)}`,
