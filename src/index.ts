@@ -344,7 +344,7 @@ but may need additional configuration.
     });
   } else if (request.params.name === activitywatch_delete_category_tool.name) {
     return makeSafeToolResponse(activitywatch_delete_category_tool.handler)({
-      name: Array.isArray(args.name) ? args.name : []
+      name: parseArray(args.name)
     });
   }
 
