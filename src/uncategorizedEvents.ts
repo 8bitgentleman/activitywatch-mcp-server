@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { AW_API_BASE } from "./config.js";
+import { handleError } from './categories.js';
 
 export interface UncategorizedSummary {
   app: string;
@@ -155,14 +156,7 @@ export const activitywatch_get_uncategorized_events_tool = {
         ]
       };
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const msg = error.response
-          ? `Failed to fetch uncategorized events: ${error.message} (Status: ${error.response.status})\n${JSON.stringify(error.response.data)}`
-          : `Failed to fetch uncategorized events: ${error.message}\nIs ActivityWatch running at http://localhost:5600?`;
-        return { content: [{ type: "text", text: msg }], isError: true };
-      }
-      const msg = error instanceof Error ? error.message : String(error);
-      return { content: [{ type: "text", text: `Failed to fetch uncategorized events: ${msg}` }], isError: true };
+      return handleError("fetch uncategorized events", error);
     }
   }
 };

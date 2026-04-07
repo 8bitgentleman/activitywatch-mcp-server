@@ -263,7 +263,7 @@ export const activitywatch_delete_category_tool = {
 
 // ─── SHARED ERROR HANDLER ─────────────────────────────────────────────────────
 
-function handleError(operation: string, error: unknown) {
+export function handleError(operation: string, error: unknown) {
   if (axios.isAxiosError(error)) {
     const msg = error.response
       ? `Failed to ${operation}: ${error.message} (Status: ${error.response.status})\n${JSON.stringify(error.response.data)}`
